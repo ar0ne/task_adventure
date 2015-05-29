@@ -80,7 +80,7 @@ class TaskService:
             rand_task_index = available_tasks_index[randint(0, len(available_tasks_index) - 1)]
             task = self._tasks[rand_task_index]
         now = datetime.now()
-        task = Task(task.id, task.title, task.description, now, now + timedelta(hours=24), True)
+        task = Task(task.id, task.title, task.description, now, now + timedelta(seconds=24), True)
         self.update_task(task)
         self._running_task = task
         return True

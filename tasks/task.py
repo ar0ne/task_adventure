@@ -61,3 +61,11 @@ class Task:
     def time_end(self, value):
         self._time_end = value
 
+    def __str__(self):
+        return ("ID: " + self._id +
+                "\nTITLE: " + self._title +
+                "\nDESCRIPTION: " + self._description +
+                "\nSTATUS: " + self._status +
+                "\nTIME START: " + self.time_start +
+                "\nTIME END: " + self.time_end)
+
