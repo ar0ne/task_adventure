@@ -1,13 +1,13 @@
 [app]
 
 # (str) Title of your application
-title = My Application
+title = TaskAdventure
 
 # (str) Package name
-package.name = myapp
+package.name = taskadventure
 
 # (str) Package domain (needed for android/ios packaging)
-package.domain = org.test
+package.domain = org.ar0ne
 
 # (str) Source code where the main.py live
 source.dir = .
@@ -33,7 +33,7 @@ version.filename = %(source.dir)s/main.py
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements = kivy
+requirements = kivy, docutils
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -49,7 +49,7 @@ requirements = kivy
 #icon.filename = %(source.dir)s/data/icon.png
 
 # (str) Supported orientation (one of landscape, portrait or all)
-orientation = landscape
+orientation = portrait
 
 # (bool) Indicate if the application should be fullscreen or not
 fullscreen = 1

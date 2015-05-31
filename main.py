@@ -10,6 +10,8 @@ from kivy.uix.button import Button
 
 from tasks import TaskController
 
+__version__ = "1.0"
+
 
 class TaskAdventure(Widget):
     pass
@@ -27,7 +29,7 @@ class AddTaskDialog(Screen):
 
         if len(title) == 0:
             popup = Popup(title='Empty Title',
-                          content=Label(text="New task can't be empty."),
+                          content=Label(text="Title for new task can't be empty."),
                           size_hint=(0.8, 0.3))
             popup.open()
             return False
@@ -69,7 +71,7 @@ class WaitTaskDialog(Screen):
             sm.current = "run_task"
         else:
             popup = Popup(title='Empty Database',
-                          content=Label(text='Database is empty. Please add few tasks manually.'),
+                          content=Label(text='Please, add few tasks manually.'),
                           size_hint=(0.8, 0.3))
             popup.open()
 
@@ -102,6 +104,8 @@ class RunningTaskDialog(Screen):
                           size_hint=(0.8, 0.3))
             popup.open()
 
+            controller.save()
+
             sm.transition.direction = 'down'
             sm.current = "wait_task"
         else:
@@ -130,6 +134,8 @@ class TaskAdventureApp(App):
                           content=Label(text='Do you complete task'),
                           size_hint=(0.8, 0.3))
                 popup.open()
+
+                controller.services.running_task = None
 
                 sm.current = 'wait_task'
 
