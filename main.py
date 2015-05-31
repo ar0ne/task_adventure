@@ -2,7 +2,11 @@ from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.properties import ObjectProperty
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.label import Label
+from kivy.uix.boxlayout import BoxLayout
 from kivy.clock import Clock
+from kivy.uix.popup import Popup
+from kivy.uix.button import Button
 
 from tasks import TaskController
 
@@ -17,10 +21,16 @@ class AddTaskDialog(Screen):
     description = ObjectProperty(None)
 
     def save(self):
-        print("SAVE: " + self.title.text + ", " + self.description.text)
 
         title = self.title.text.strip().replace("\t", " ")
         description = self.description.text.strip().replace("\t", " ")
+
+        if len(title) == 0:
+            popup = Popup(title='Empty Title',
+                          content=Label(text="New task can't be empty."),
+                          size_hint=(0.8, 0.3))
+            popup.open()
+            return False
 
         controller.services.add_task(title, description)
         controller.save()
@@ -58,7 +68,11 @@ class WaitTaskDialog(Screen):
             sm.transition.direction = 'right'
             sm.current = "run_task"
         else:
-            """@TODO: add pop up for notify user about empty database"""
+            popup = Popup(title='Empty Database',
+                          content=Label(text='Database is empty. Please add few tasks manually.'),
+                          size_hint=(0.8, 0.3))
+            popup.open()
+
 
 
 class RunningTaskDialog(Screen):
@@ -78,7 +92,15 @@ class RunningTaskDialog(Screen):
 
     def update(self, dt=None):
         if controller.is_running_task() is False:
-            # @TODO: add message
+
+            # @TODO: add 2 buttons for answer and what?!
+            # if Yes - then clear running_task
+            # if No - then what?!
+
+            popup = Popup(title='Time out',
+                          content=Label(text='Do you complete task'),
+                          size_hint=(0.8, 0.3))
+            popup.open()
 
             sm.transition.direction = 'down'
             sm.current = "wait_task"
@@ -102,7 +124,12 @@ class TaskAdventureApp(App):
             if controller.services.running_task is None:
                 sm.current = 'wait_task'
             else:
-                """@TODO: Add pop up window with question about task status"""
+                # @TODO: Add pop up window with question about task status
+                # see early
+                popup = Popup(title='Time out',
+                          content=Label(text='Do you complete task'),
+                          size_hint=(0.8, 0.3))
+                popup.open()
 
                 sm.current = 'wait_task'
 
