@@ -16,6 +16,14 @@ class TaskController:
     def status(self, value):
         self._status = value
 
+    @property
+    def services(self):
+        return self._services
+
+    @services.setter
+    def services(self, value):
+        self._services = value
+
     @staticmethod
     def load():
         try:
@@ -65,7 +73,7 @@ class TaskController:
                 else:
                     print("Input not recognated. Try again")
             else:
-                if self.check_running_task() is False:
+                if self.is_running_task() is False:
                     continue
                 str = raw_input("Type 'SHOW' - for show Task info\nType 'EXIT' for quit\nType 'ADD' for add new Task\n")
                 if str.upper() == "SHOW":
@@ -80,18 +88,14 @@ class TaskController:
                 else:
                     print("Input not recognated. Try again")
 
-    def check_running_task(self):
+    def is_running_task(self):
+        """
+        Check task status
+        :return: False if not time left, True else
+        """
+        if self._services._running_task is None:
+            return False
         if self.time_left() <= timedelta(seconds=0):
-            self.status = False
-            str = raw_input("Do you complete task?(Y/N)")
-            if str.upper() == "Y":
-                self._services._running_task = None
-            elif str.upper() == "N":
-                """Maybe add this task to opened tasks?"""
-                # task = self._services._running_task
-                # task.status = False  # That task can be
-                # self._services.update_task(task)
-                self._services._running_task = None
             return False
         else:
             return True

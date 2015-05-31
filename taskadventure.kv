@@ -40,8 +40,8 @@
 
 
 <WaitTaskDialog>
+
     Button:
-        id: start_button
         text: "START"
         font_size: self.width / 6
         halign: 'center'
@@ -49,8 +49,10 @@
         size_hint: 0.94, 0.3
         pos: (self.parent.width - self.width)/2, root.top - (self.height * 1.1)
 
+        on_press:
+            root.start()
+
     Button:
-        id: add_button
         text: "ADD TASK"
         size_hint: 1, 0.1
 
@@ -61,6 +63,11 @@
 
 
 <RunningTaskDialog>
+
+    clock: clock
+    title: title
+    description: description
+
     canvas.before:
         Color:
             rgba: 0, 1, 0.5, 0.5
@@ -69,8 +76,8 @@
             size: self.size
 
     Button:
-        id: start_button
-        text: "22:03:01"
+        id: clock
+        text: ""
         font_size: self.width / 6
         halign: 'center'
         valign: 'middle'  
@@ -93,17 +100,14 @@
             Label:
                 font_size: root.width / 19
                 id: title
-                text: "Title"
+                text: ""
                 size_hint: 1, 0.2
 
             RstDocument:
                 font_size: root.width / 20
                 id: description
-                text: "Description djak djka wbdjk wbdjk wabdjk abdjk awbd jkwab djkwbjk wbdjk wabdjk abdjk awbd jkw jk wbdjk wabdjk abdjk awbd jkw jk wbdjk wabdjk abdjk awbd jkwajkawdbwjakdbwjk"
+                text: ""
                 size_hint: 1, 0.5
-
-
-
 
     Button:
         id: add_button
