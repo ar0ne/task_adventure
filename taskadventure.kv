@@ -2,28 +2,30 @@
 
 <AddTaskDialog>
     
-    title: title
     description: description
+
+    canvas.before:
+        Color:
+            rgba: 0.188, 0.247, 0.624, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
 
     BoxLayout:
 
         orientation: 'vertical'
 
         Label:
-            font_size: root.width / 15
-            text: "Title"
-
-        TextInput:
-            id: title
-            text: ""
-
-        Label:
+            size_hint_y: 0.4
             font_size: root.width / 15
             text: "Description"
 
         TextInput:
             id: description
             text: ""
+            font_size: self.width / 20
+            background_color: (0.961, 0.961, 0.961, 1)
+            foreground_color: (0, 0, 0, 1)
 
         BoxLayout:
             orientation: "horizontal"
@@ -33,13 +35,28 @@
             Button:
                 text: "SAVE"
                 on_press: root.save()
+                font_size: root.width / 23
+                background_normal: ""
+                background_color: (1, 1, 1, 1.0)
+                color: 0, 0, 0, 1
 
             Button:
                 text: "CANCEL"
                 on_press: root.cancel()
+                font_size: root.width / 23
+                background_normal: ""
+                background_color: (1, 1, 1, 1.0)
+                color: 0, 0, 0, 1
 
 
 <WaitTaskDialog>
+
+    canvas.before:
+        Color:
+            rgba: 0.247, 0.318, 0.71, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
 
     Button:
         text: "START"
@@ -48,6 +65,10 @@
         valign: 'middle'  
         size_hint: 0.94, 0.3
         pos: (self.parent.width - self.width)/2, root.top - (self.height * 1.1)
+        background_normal: ""
+        background_color: (0.188, 0.247, 0.624, 1)
+        color: 1, 1, 1, 1
+
 
         on_press:
             root.start()
@@ -55,6 +76,10 @@
     Button:
         text: "ADD TASK"
         size_hint: 1, 0.1
+        font_size: self.width / 23
+        background_normal: ""
+        background_color: (1, 1, 1, 1.0)
+        color: 0, 0, 0, 1
 
         on_press:
             root.manager.transition.direction = 'right'
@@ -65,15 +90,28 @@
 <RunningTaskDialog>
 
     clock: clock
-    title: title
     description: description
 
     canvas.before:
         Color:
-            rgba: 0, 1, 0.5, 0.5
+            rgba: 0.247, 0.318, 0.71, 1
         Rectangle:
             pos: self.pos
             size: self.size
+
+    FloatLayout:
+
+        BoxLayout:
+            orientation: 'vertical'
+
+            Label:
+                id: description
+                text: ""
+                halign: 'center'
+                font_size: root.width / 18
+                text_size: self.width, None
+                height: self.texture_size[1]
+                color: (1, 1, 1, 1)
 
     Button:
         id: clock
@@ -83,36 +121,17 @@
         valign: 'middle'  
         size_hint: 0.94, 0.3
         pos: (self.parent.width - self.width)/2, root.top - (self.height + self.height * 0.1)
-
-    FloatLayout:
-
-        canvas.before:
-            Color:
-                rgba: 0, 1, 0.2, 0.5
-            Rectangle:
-                pos: 0, root.height * 0.11
-                size: root.width, root.height * 0.55
-
-        BoxLayout:
-            size_hint: 1, 0.65
-            orientation: 'vertical'
-
-            Label:
-                font_size: root.width / 19
-                id: title
-                text: ""
-                size_hint: 1, 0.2
-
-            RstDocument:
-                font_size: root.width / 20
-                id: description
-                text: ""
-                size_hint: 1, 0.5
+        background_normal: ""
+        background_color: (1, 0.251, 0.506, 1)
 
     Button:
         id: add_button
         text: "ADD TASK"
         size_hint: 1, 0.1
+        font_size: self.width / 23
+        background_normal: ""
+        background_color: (1, 1, 1, 1.0)
+        color: 0, 0, 0, 1
 
         on_press:
             root.manager.transition.direction = 'right'

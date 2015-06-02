@@ -19,25 +19,23 @@ class TaskAdventure(Widget):
 
 class AddTaskDialog(Screen):
 
-    title = ObjectProperty(None)
     description = ObjectProperty(None)
 
     def save(self):
 
-        title = self.title.text.strip().replace("\t", " ")
         description = self.description.text.strip().replace("\t", " ")
 
-        if len(title) == 0:
-            popup = Popup(title='Empty Title',
-                          content=Label(text="Title for new task can't be empty."),
+        if len(description) == 0:
+            popup = Popup(title='Empty Task',
+                          content=Label(text="Task can't be empty."),
                           size_hint=(0.8, 0.3))
             popup.open()
             return False
 
-        controller.services.add_task(title, description)
+        controller.services.add_task(description)
         controller.save()
 
-        self.title.text = self.description.text = ""
+        self.description.text = ""
 
         sm.transition.direction = 'left'
 
@@ -47,7 +45,7 @@ class AddTaskDialog(Screen):
             sm.current = "run_task"
 
     def cancel(self):
-        self.title.text = self.description.text = ""
+        self.description.text = ""
 
         sm.transition.direction = 'left'
 
@@ -67,7 +65,7 @@ class WaitTaskDialog(Screen):
             controller.status = True
             controller.save()
 
-            sm.transition.direction = 'right'
+            sm.transition.direction = 'up'
             sm.current = "run_task"
         else:
             popup = Popup(title='Empty Database',
@@ -79,13 +77,11 @@ class WaitTaskDialog(Screen):
 
 class RunningTaskDialog(Screen):
 
-    title = ObjectProperty(None)
     description = ObjectProperty(None)
     clock = ObjectProperty(None)
 
     def on_pre_enter(self, *args):
         self.update()
-        self.title.text = str(controller.services.running_task.title)
         self.description.text = str(controller.services.running_task.description)
         Clock.schedule_interval(self.update, 1)
 
@@ -104,12 +100,15 @@ class RunningTaskDialog(Screen):
                           size_hint=(0.8, 0.3))
             popup.open()
 
+            controller.status = controller.is_running_task()
+            controller.services.running_task = None
+
             controller.save()
 
             sm.transition.direction = 'down'
             sm.current = "wait_task"
         else:
-            self.clock.text = str(controller.time_left()).split(".")[0]
+            self.clock.text = str(controller.time_left()).split(".")[0]  # remove milliseconds
 
 
 class TaskAdventureApp(App):
@@ -136,6 +135,8 @@ class TaskAdventureApp(App):
                 popup.open()
 
                 controller.services.running_task = None
+
+                controller.save()
 
                 sm.current = 'wait_task'
 
