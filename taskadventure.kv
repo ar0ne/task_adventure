@@ -51,6 +51,8 @@
 
 <WaitTaskDialog>
 
+    closed_tasks_panel: closed_tasks_panel
+
     canvas.before:
         Color:
             rgba: 0.247, 0.318, 0.71, 1
@@ -58,20 +60,30 @@
             pos: self.pos
             size: self.size
 
-    Button:
-        text: "START"
-        font_size: self.width / 6
-        halign: 'center'
-        valign: 'middle'  
+    BoxLayout:
+
         size_hint: 0.94, 0.3
-        pos: (self.parent.width - self.width)/2, root.top - (self.height * 1.1)
-        background_normal: ""
-        background_color: (0.188, 0.247, 0.624, 1)
-        color: 1, 1, 1, 1
+        pos: (self.parent.width - self.width) / 2, root.top - (self.height * 1.1)
 
+        Button:
+            text: "START"
+            font_size: self.width / 6
+            halign: 'center'
+            valign: 'middle'
 
-        on_press:
-            root.start()
+            background_normal: ""
+            background_color: (0.188, 0.247, 0.624, 1)
+            color: 1, 1, 1, 1
+
+            on_press:
+                root.start()
+
+    BoxLayout:
+        id: closed_tasks_panel
+        orientation: "vertical"
+        size_hint: 1, 1
+        pos: 0, root.top * 0.1
+
 
     Button:
         text: "ADD TASK"
@@ -138,3 +150,56 @@
             root.manager.current = 'add_task'
 
 
+<ClosedTaskPreview>
+
+    short_description: short_description
+    date: date
+
+    size_hint_y: None
+    size: root.size
+    pos: root.pos
+
+    Button:
+
+        on_press:
+            root.show_closed_task_dialog(self)
+
+        size_hint_y: None
+
+        background_normal: ""
+        background_color: (0.961, 0.961, 0.961, 1)
+
+        BoxLayout:
+
+            size: root.size
+            pos: root.pos
+
+            orientation: "vertical"
+
+            Label:
+                id: short_description
+                text: ""
+                color: (0, 0, 0, 1)
+                font_size: root.width / 20
+
+            Label:
+                id: date
+                text: ""
+                color: (0.259, 0.259, 0.259, 1)
+                font_size: root.width / 25
+
+
+
+
+<ClosedTaskDialog>
+    Button:
+        text: "BACK"
+        size_hint: 1, 0.1
+        font_size: self.width / 23
+        background_normal: ""
+        background_color: (1, 1, 1, 1.0)
+        color: 0, 0, 0, 1
+
+        on_press:
+            root.manager.transition.direction = 'right'
+            root.manager.current = 'wait_task'

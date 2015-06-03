@@ -8,21 +8,39 @@ class TaskService:
         self.tasks = tasks
         self.running_task = None
 
-    def get_closed_tasks(self):
-        """Get all tasks with status Done == True"""
-        tasks_done = []
-        for t in self.tasks:
-            if t.is_done():
-                tasks_done.append(t)
-        return tasks_done
+    def get_closed_tasks(self, count=0):
+        """Get all(or count) tasks with status Done == True"""
+        tasks_closed = []
+        if count == 0:  # get all closed tasks
+            for t in self.tasks:
+                if t.status is True:
+                    tasks_closed.append(t)
+            return tasks_closed
+        else:  # get how much we can or count
+            for t in self.tasks:
+                if count <= 0:
+                    break
+                if t.status is True:
+                    tasks_closed.append(t)
+                    count -= 1
+            return tasks_closed
 
-    def get_opened_tasks(self):
-        """Get all tasks with status Done == False"""
+    def get_opened_tasks(self, count=0):
+        """Get all(or count) tasks with status Done == False"""
         tasks_open = []
-        for t in self.tasks:
-            if not t.status:
-                tasks_open.append(t)
-        return tasks_open
+        if count == 0:  # get all closed tasks
+            for t in self.tasks:
+                if t.status is True:
+                    tasks_open.append(t)
+            return tasks_open
+        else:  # get how much we can or count
+            for t in self.tasks:
+                if count <= 0:
+                    break
+                if t.status is True:
+                    tasks_open.append(t)
+                    count -= 1
+            return tasks_open
 
     def get_last_id(self):
         """Get last id in tasks"""

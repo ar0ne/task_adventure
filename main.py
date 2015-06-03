@@ -4,9 +4,11 @@ from kivy.properties import ObjectProperty
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.floatlayout import FloatLayout
 from kivy.clock import Clock
 from kivy.uix.popup import Popup
 from kivy.uix.button import Button
+from kivy.core.window import Window
 
 from tasks import TaskController
 
@@ -32,6 +34,13 @@ class AddTaskDialog(Screen):
             popup.open()
             return False
 
+        elif len(description) > 300:
+            popup = Popup(title='Task too long',
+                          content=Label(text="Task can't be more then 300 chars."),
+                          size_hint=(0.8, 0.3))
+            popup.open()
+            return False
+
         controller.services.add_task(description)
         controller.save()
 
@@ -45,6 +54,7 @@ class AddTaskDialog(Screen):
             sm.current = "run_task"
 
     def cancel(self):
+
         self.description.text = ""
 
         sm.transition.direction = 'left'
@@ -57,10 +67,20 @@ class AddTaskDialog(Screen):
 
 class WaitTaskDialog(Screen):
 
+    closed_tasks_panel = ObjectProperty(None)
+
+    def on_pre_enter(self, *args):
+        closed_tasks = controller.services.get_closed_tasks(3)  # get last 3 closed tasks
+        for index, task in enumerate(closed_tasks):
+            self.closed_tasks_panel.add_widget( ClosedTaskPreview(task.description, task.time_end) )
+
+    def on_leave(self, *args):
+        self.closed_tasks_panel.clear_widgets()
+
     def start(self):
-        print("START")
 
         ret = controller.services.start_random_task()
+
         if ret is True:
             controller.status = True
             controller.save()
@@ -111,6 +131,29 @@ class RunningTaskDialog(Screen):
             self.clock.text = str(controller.time_left()).split(".")[0]  # remove milliseconds
 
 
+class ClosedTaskPreview(BoxLayout):
+
+    short_description = ObjectProperty(None)
+    date = ObjectProperty(None)
+
+    def __init__(self, description=None, date=None, **kwargs):
+        super(ClosedTaskPreview, self).__init__(**kwargs)
+
+        if not description is None:
+            self.short_description.text = str(description)[:15] + "..."
+        if not date is None:
+            self.date.text = date.strftime("%d.%m.%Y")
+
+    def show_closed_task_dialog(self, button):
+        print("Show " + button.parent.short_description.text )
+        sm.transition.direction = 'left'
+        sm.current = "closed_tasks"
+
+
+class ClosedTaskDialog(Screen):
+    pass
+
+
 class TaskAdventureApp(App):
 
     def build(self):
@@ -118,6 +161,7 @@ class TaskAdventureApp(App):
         sm.add_widget(WaitTaskDialog(name='wait_task'))
         sm.add_widget(AddTaskDialog(name='add_task'))
         sm.add_widget(RunningTaskDialog(name='run_task'))
+        sm.add_widget(ClosedTaskDialog(name='closed_tasks'))
 
         sm.transition.direction = 'up'
 
