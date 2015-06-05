@@ -29,17 +29,12 @@ class AddTaskDialog(Screen):
         description = self.description.text.strip().replace("\t", " ")
 
         if len(description) == 0:
-            popup = Popup(title='Empty Task',
-                          content=Label(text="Task can't be empty."),
-                          size_hint=(0.8, 0.3))
-            popup.open()
+            EmptyTaskPopup().open()
+
             return False
 
         elif len(description) > 300:
-            popup = Popup(title='Task too long',
-                          content=Label(text="Task can't be more then 300 chars."),
-                          size_hint=(0.8, 0.3))
-            popup.open()
+            TooLongTaskDescriptionPopup().open()
             return False
 
         controller.services.add_task(description)
@@ -89,11 +84,7 @@ class WaitTaskDialog(Screen):
             sm.transition.direction = 'up'
             sm.current = "run_task"
         else:
-            popup = Popup(title='Empty Database',
-                          content=Label(text='Please, add few tasks manually.'),
-                          size_hint=(0.8, 0.3))
-            popup.open()
-
+            EmptyDatabasePopup().open()
 
 
 class RunningTaskDialog(Screen):
@@ -112,14 +103,7 @@ class RunningTaskDialog(Screen):
     def update(self, dt=None):
         if controller.is_running_task() is False:
 
-            # @TODO: add 2 buttons for answer and what?!
-            # if Yes - then clear running_task
-            # if No - then what?!
-
-            popup = Popup(title='Time out',
-                          content=Label(text='Do you complete task'),
-                          size_hint=(0.8, 0.3))
-            popup.open()
+            CompleteTaskPopup().open()
 
             controller.status = controller.is_running_task()
             controller.services.running_task = None
@@ -141,7 +125,7 @@ class ClosedTaskPreview(BoxLayout):
         super(ClosedTaskPreview, self).__init__(**kwargs)
 
         if not description is None:
-            self.short_description.text = str(description)[:15] + "..."
+            self.short_description.text = str(description)[:20] + "..."
         if not date is None:
             self.date.text = date.strftime("%d.%m.%Y")
 
@@ -163,7 +147,7 @@ class TaskAdventureApp(App):
 
     def build(self):
 
-        EventLoop.window.clearcolor = (0.247, 0.318, 0.71, 1)
+        EventLoop.window.clearcolor = (0.247, 0.318, 0.71, 1)  # set blue color as base background color instead black
 
         sm.add_widget(WaitTaskDialog(name='wait_task'))
         sm.add_widget(AddTaskDialog(name='add_task'))
@@ -178,12 +162,7 @@ class TaskAdventureApp(App):
             if controller.services.running_task is None:
                 sm.current = 'wait_task'
             else:
-                # @TODO: Add pop up window with question about task status
-                # see early
-                popup = Popup(title='Time out',
-                          content=Label(text='Do you complete task'),
-                          size_hint=(0.8, 0.3))
-                popup.open()
+                CompleteTaskPopup().open()
 
                 controller.services.running_task = None
 
@@ -200,11 +179,104 @@ class TaskAdventureApp(App):
         """ To be called whenever user presses Back/Esc Key """
         # If user presses Back/Esc Key
         if key == 27:
-            # Do whatever you need to do, like check if there are any
-            # screens that you can go back to.
-            # return True if you don't want to close app
-            # return False if you do
+            ExitPopup().open()
             return True
+        return False
+
+class OneButtonPopup(Popup):
+    """Base class for one button popup modal windows"""
+    def on_press_dismiss(self, *args):
+        self.dismiss()
+        return False
+
+class EmptyDatabasePopup(OneButtonPopup):
+
+    close_button = ObjectProperty(None)
+    content_label = ObjectProperty(None)
+
+    def __init__(self, **kwargs):
+        super(EmptyDatabasePopup, self).__init__(**kwargs)
+        self.close_button.text = "OK"
+        self.content_label.text = "Please, add few tasks manually."
+        self.title = 'Empty Database'
+
+
+class EmptyTaskPopup(OneButtonPopup):
+
+    close_button = ObjectProperty(None)
+    content_label = ObjectProperty(None)
+
+    def __init__(self, **kwargs):
+        super(EmptyTaskPopup, self).__init__(**kwargs)
+        self.close_button.text = "OK"
+        self.content_label.text = "Task can't be empty."
+        self.title = 'Empty Task'
+
+
+class TooLongTaskDescriptionPopup(OneButtonPopup):
+
+    close_button = ObjectProperty(None)
+    content_label = ObjectProperty(None)
+
+    def __init__(self, **kwargs):
+        super(TooLongTaskDescriptionPopup, self).__init__(**kwargs)
+        self.close_button.text = "OK"
+        self.content_label.text = "Task can't be more then 300 chars."
+        self.title = 'Task too long'
+
+
+class TwoButtonPopup(Popup):
+    """Base class for popup with 2 buttons like: "Yes" and "No" with own callbacks"""
+    def first_button_callback(self):
+        pass
+
+    def second_button_callback(self):
+        pass
+
+
+class CompleteTaskPopup(TwoButtonPopup):
+
+    first_button = ObjectProperty(None)
+    second_button = ObjectProperty(None)
+    content_label = ObjectProperty(None)
+
+    def __init__(self, **kwargs):
+        super(CompleteTaskPopup, self).__init__(**kwargs)
+        self.title = 'Time out'
+        self.content_label.text = "Do you complete quest?"
+        self.first_button.text = "Yes"
+        self.second_button.text = "No"
+
+    def first_button_callback(self):
+        self.dismiss()
+        return False
+
+    def second_button_callback(self):
+        self.dismiss()
+        return False
+
+
+class ExitPopup(TwoButtonPopup):
+
+    first_button = ObjectProperty(None)
+    second_button = ObjectProperty(None)
+    content_label = ObjectProperty(None)
+
+    def __init__(self, **kwargs):
+        super(ExitPopup, self).__init__(**kwargs)
+        self.title = 'Exit'
+        self.content_label.text = "Do you want to exit?"
+        self.first_button.text = "Yes"
+        self.second_button.text = "No"
+
+    def first_button_callback(self):
+        """Kill application"""
+        App.get_running_app().stop()
+        return True
+
+    def second_button_callback(self):
+        """Close popup"""
+        self.dismiss()
         return False
 
 

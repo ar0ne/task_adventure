@@ -242,3 +242,74 @@
         on_press:
             root.manager.transition.direction = 'right'
             root.manager.current = 'wait_task'
+
+
+
+<OneButtonPopup>
+    close_button: close_button
+    content_label: content_label
+
+    title: ''
+    size_hint: 0.9, 0.3
+    background: ""
+    title_color: (0, 0, 0, 1)
+
+    BoxLayout:
+        orientation: "vertical"
+        Label:
+            id: content_label
+            text: ""
+            color: (0, 0, 0, 1)
+        Button:
+            id: close_button
+            text: ""
+            size_hint: 1, 0.4
+            color: (0, 0, 0, 1)
+            background_normal: ""
+            background_color: (1, 1, 1, 1.0)
+            on_press:
+                root.on_press_dismiss()
+
+<TwoButtonPopup>
+
+    first_button: first_button
+    second_button: second_button
+    content_label: content_label
+
+    title: ''
+    size_hint: 0.9, 0.3
+    background: ""
+    title_color: (0, 0, 0, 1)
+
+    BoxLayout:
+
+        orientation: "vertical"
+
+        Label:
+            id: content_label
+            text: ""
+            color: (0, 0, 0, 1)
+
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint: 1, 0.4
+
+            Button:
+                id: first_button
+                text: ""
+                size_hint: 0.5, 1
+                color: (0, 0, 0, 1)
+                background_normal: ""
+                background_color: (1, 1, 1, 1.0)
+                on_press:
+                    root.first_button_callback()
+
+            Button:
+                id: second_button
+                text: ""
+                size_hint: 0.5, 1
+                color: (0, 0, 0, 1)
+                background_normal: ""
+                background_color: (1, 1, 1, 1.0)
+                on_press:
+                    root.second_button_callback()

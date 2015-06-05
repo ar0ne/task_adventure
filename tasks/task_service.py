@@ -30,14 +30,14 @@ class TaskService:
         tasks_open = []
         if count == 0:  # get all closed tasks
             for t in self.tasks:
-                if t.status is True:
+                if t.status is False:
                     tasks_open.append(t)
             return tasks_open
         else:  # get how much we can or count
             for t in self.tasks:
                 if count <= 0:
                     break
-                if t.status is True:
+                if t.status is False:
                     tasks_open.append(t)
                     count -= 1
             return tasks_open

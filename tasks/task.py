@@ -5,7 +5,7 @@ class Task:
         self.description = description
         self.time_start = time_start
         self.time_end = time_end
-        self.status = status
+        self.status = status  # if True the task complete
 
     def __str__(self):
         return ("ID: " + self.id +
