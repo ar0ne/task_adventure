@@ -50,6 +50,20 @@ class TaskService:
                 last_id = task.id
         return last_id
 
+    def get_last_k_closed_tasks(self, k=0):
+        """Get last k or less closed tasks if it's impossible"""
+        if k is not 0:
+            all_closed_tasks = self.get_closed_tasks()
+            foo = []
+            for task in all_closed_tasks:
+                foo.append((task.time_end, task))
+            last_k = sorted(foo)[-k:]  # sort by index and get k-last tasks
+            out = []
+            for task in reversed(last_k):  # reverse before return
+                out.append(task[1])
+            return out
+        return None
+
     def add_task(self, task):
         if task is None:
             raise Exception("[WARNING] Task can't be NULL")

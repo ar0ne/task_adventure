@@ -6,7 +6,7 @@
 
     canvas.before:
         Color:
-            rgba: 0.188, 0.247, 0.624, 1
+            rgba: 0.247, 0.318, 0.71, 1
         Rectangle:
             pos: self.pos
             size: self.size
@@ -35,7 +35,7 @@
             Button:
                 text: "SAVE"
                 on_press: root.save()
-                font_size: root.width / 23
+                font_size: root.width / 18
                 background_normal: ""
                 background_color: (1, 1, 1, 1.0)
                 color: 0, 0, 0, 1
@@ -43,7 +43,7 @@
             Button:
                 text: "CANCEL"
                 on_press: root.cancel()
-                font_size: root.width / 23
+                font_size: root.width / 18
                 background_normal: ""
                 background_color: (1, 1, 1, 1.0)
                 color: 0, 0, 0, 1
@@ -88,7 +88,7 @@
     Button:
         text: "ADD TASK"
         size_hint: 1, 0.1
-        font_size: self.width / 23
+        font_size: self.width / 18
         background_normal: ""
         background_color: (1, 1, 1, 1.0)
         color: 0, 0, 0, 1
@@ -140,7 +140,7 @@
         id: add_button
         text: "ADD TASK"
         size_hint: 1, 0.1
-        font_size: self.width / 23
+        font_size: self.width / 18
         background_normal: ""
         background_color: (1, 1, 1, 1.0)
         color: 0, 0, 0, 1
@@ -159,34 +159,73 @@
     size: root.size
     pos: root.pos
 
-    Button:
+    BoxLayout:
 
-        on_press:
-            root.show_closed_task_dialog(self)
+        orientation: "horizontal"
 
-        size_hint_y: None
+        Image:
 
-        background_normal: ""
-        background_color: (0.961, 0.961, 0.961, 1)
+            canvas.before:
+                Color:
+                    rgba: 0.961, 0.961, 0.961, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            size_hint_x: 0.2
+            source: "images/checkmark-circle.png"
+            center_x: self.parent.center_x
+            center_y: self.parent.center_y
 
         BoxLayout:
 
-            size: root.size
-            pos: root.pos
+            canvas.before:
+                Color:
+                    rgba: 0.961, 0.961, 0.961, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            size_hint_x: 0.7
 
             orientation: "vertical"
 
             Label:
                 id: short_description
                 text: ""
+                text_size: self.size
+                texture_size: self.size
+                size_hint_y: 0.6
                 color: (0, 0, 0, 1)
+                valign: "middle"
                 font_size: root.width / 20
 
             Label:
+                size_hint: 1, 1
                 id: date
                 text: ""
+                text_size: self.size
+                texture_size: self.size
+                size_hint_y: 0.4
                 color: (0.259, 0.259, 0.259, 1)
-                font_size: root.width / 25
+                font_size: root.width / 27
+                valign: "middle"
+
+        Button:
+
+            size_hint_x: 0.2
+
+            on_press:
+                root.show_closed_task_dialog(self)
+
+            background_normal: ""
+            background_color: (0.91, 0.91, 0.91, 1)
+
+            Image:
+                source: "images/right-arrow.png"
+                center_x: self.parent.center_x
+                center_y: self.parent.center_y
+                size: root.width * 0.7, root.height * 0.7
 
 
 
@@ -195,7 +234,7 @@
     Button:
         text: "BACK"
         size_hint: 1, 0.1
-        font_size: self.width / 23
+        font_size: self.width / 18
         background_normal: ""
         background_color: (1, 1, 1, 1.0)
         color: 0, 0, 0, 1

@@ -9,6 +9,7 @@ from kivy.clock import Clock
 from kivy.uix.popup import Popup
 from kivy.uix.button import Button
 from kivy.core.window import Window
+from kivy.base import EventLoop
 
 from tasks import TaskController
 
@@ -70,7 +71,7 @@ class WaitTaskDialog(Screen):
     closed_tasks_panel = ObjectProperty(None)
 
     def on_pre_enter(self, *args):
-        closed_tasks = controller.services.get_closed_tasks(3)  # get last 3 closed tasks
+        closed_tasks = controller.services.get_last_k_closed_tasks(4)  # get last 4 closed tasks
         for index, task in enumerate(closed_tasks):
             self.closed_tasks_panel.add_widget( ClosedTaskPreview(task.description, task.time_end) )
 
@@ -145,7 +146,7 @@ class ClosedTaskPreview(BoxLayout):
             self.date.text = date.strftime("%d.%m.%Y")
 
     def show_closed_task_dialog(self, button):
-        print("Show " + button.parent.short_description.text )
+        # print("Show " + button.parent.short_description.text )
         sm.transition.direction = 'left'
         sm.current = "closed_tasks"
 
@@ -156,7 +157,13 @@ class ClosedTaskDialog(Screen):
 
 class TaskAdventureApp(App):
 
+    def __init__(self, **kwargs):
+        super(TaskAdventureApp, self).__init__(**kwargs)
+        Window.bind(on_keyboard=self.on_back_btn)
+
     def build(self):
+
+        EventLoop.window.clearcolor = (0.247, 0.318, 0.71, 1)
 
         sm.add_widget(WaitTaskDialog(name='wait_task'))
         sm.add_widget(AddTaskDialog(name='add_task'))
@@ -188,6 +195,18 @@ class TaskAdventureApp(App):
             sm.current = 'run_task'
 
         return sm
+
+    def on_back_btn(self, window, key, *args):
+        """ To be called whenever user presses Back/Esc Key """
+        # If user presses Back/Esc Key
+        if key == 27:
+            # Do whatever you need to do, like check if there are any
+            # screens that you can go back to.
+            # return True if you don't want to close app
+            # return False if you do
+            return True
+        return False
+
 
 
 if __name__ == '__main__':
