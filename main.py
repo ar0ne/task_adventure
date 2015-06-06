@@ -10,6 +10,9 @@ from kivy.uix.popup import Popup
 from kivy.uix.button import Button
 from kivy.core.window import Window
 from kivy.base import EventLoop
+from kivy.adapters.listadapter import ListAdapter
+from kivy.uix.listview import ListItemButton, ListView
+from kivy.adapters.models import SelectableDataItem
 
 from tasks import TaskController
 
@@ -115,6 +118,9 @@ class RunningTaskDialog(Screen):
         else:
             self.clock.text = str(controller.time_left()).split(".")[0]  # remove milliseconds
 
+    def clock_button_callback(self):
+        CompleteTaskEarlyPopup().open()
+
 
 class ClosedTaskPreview(BoxLayout):
 
@@ -136,7 +142,60 @@ class ClosedTaskPreview(BoxLayout):
 
 
 class ClosedTaskDialog(Screen):
-    pass
+
+    closed_task_listview = ObjectProperty(None)
+
+    def on_pre_enter(self, *args):
+        self.closed_task_listview.add_widget(ClosedTaskListView())
+
+    def on_leave(self, *args):
+        self.closed_task_listview.clear_widgets()
+
+
+class DataItem(SelectableDataItem):
+    """Class wrapper for task instance, need it for ListView"""
+    def __init__(self, description='', time_start="", time_end="", **kwargs):
+        super(DataItem, self).__init__(**kwargs)
+        self.description = description
+        self.time_start = "Started:  " + str(time_start).split(".")[0]  # cut milliseconds
+        self.time_end = "Ended:    " + str(time_end).split(".")[0]
+
+class CustomListItem(BoxLayout):
+
+    description = ObjectProperty(None)
+    time_start =  ObjectProperty(None)
+    time_end =    ObjectProperty(None)
+
+    def __init__(self, **kwargs):
+        super(CustomListItem, self).__init__(**kwargs)
+        self.description.text = kwargs['description']
+        self.time_start.text =  kwargs['time_start']
+        self.time_end.text =    kwargs['time_end']
+
+class ClosedTaskListView(BoxLayout):
+    def __init__(self, **kwargs):
+        super(ClosedTaskListView, self).__init__(**kwargs)
+        closed_tasks = controller.services.get_closed_tasks()
+
+        data_items = [DataItem(description=task.description,
+                               time_end=task.time_end,
+                               time_start=task.time_start) for task in closed_tasks]
+
+        list_item_args_converter = lambda row_index, obj: {'description': obj.description,
+                                                           'time_start': obj.time_start,
+                                                           'time_end': obj.time_end,
+                                                           'size_hint_y': None}
+
+        list_adapter = ListAdapter( data=data_items,
+                                    args_converter=list_item_args_converter,
+                                    propagate_selection_to_data=True,
+                                    cls='CustomListItem')
+
+        master_list_view = ListView(adapter=list_adapter,
+                                    size_hint=(.3, 1.0))
+
+        self.add_widget(master_list_view)
+
 
 
 class TaskAdventureApp(App):
@@ -258,7 +317,7 @@ class CompleteTaskPopup(TwoButtonPopup):
 
 class ExitPopup(TwoButtonPopup):
 
-    first_button = ObjectProperty(None)
+    first_button =  ObjectProperty(None)
     second_button = ObjectProperty(None)
     content_label = ObjectProperty(None)
 
@@ -279,6 +338,31 @@ class ExitPopup(TwoButtonPopup):
         self.dismiss()
         return False
 
+
+class CompleteTaskEarlyPopup(TwoButtonPopup):
+
+    first_button = ObjectProperty(None)
+    second_button = ObjectProperty(None)
+    content_label = ObjectProperty(None)
+
+    def __init__(self, **kwargs):
+        super(CompleteTaskEarlyPopup, self).__init__(**kwargs)
+        self.title = 'Complete task'
+        self.content_label.text = "You have already completed the task?"
+        self.first_button.text = "Yes"
+        self.second_button.text = "No"
+
+    def first_button_callback(self):
+        """Stop running current task"""
+        controller.status = False
+        controller.services.running_task = None
+        self.dismiss()
+        return False
+
+    def second_button_callback(self):
+        """Close popup"""
+        self.dismiss()
+        return False
 
 
 if __name__ == '__main__':

@@ -136,6 +136,9 @@
         background_normal: ""
         background_color: (1, 0.251, 0.506, 1)
 
+        on_press:
+            root.clock_button_callback()
+
     Button:
         id: add_button
         text: "ADD TASK"
@@ -231,6 +234,14 @@
 
 
 <ClosedTaskDialog>
+
+    closed_task_listview: closed_task_listview
+
+    BoxLayout:
+        id: closed_task_listview
+        size_hint: 1, 0.9
+        pos: 0, root.height * 0.1
+
     Button:
         text: "BACK"
         size_hint: 1, 0.1
@@ -313,3 +324,61 @@
                 background_color: (1, 1, 1, 1.0)
                 on_press:
                     root.second_button_callback()
+
+<CustomListItem>
+
+    description: description
+    time_start: time_start
+    time_end: time_end
+
+    BoxLayout:
+
+        orientation: "vertical"
+
+        canvas.before:
+            Color:
+                rgba: 0.961, 0.961, 0.961, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        BoxLayout:
+
+            orientation: "horizontal"
+            size_hint: 1, 1
+
+            Label:
+
+                id: description
+                text: ""
+                text_size: self.size
+                texture_size: self.size
+                font_size: root.width / 20
+                valign: "middle"
+                halign: "center"
+                color: (0, 0, 0, 1)
+
+        BoxLayout:
+
+            orientation: "vertical"
+            size_hint: 0.9, 1
+
+            Label:
+                id: time_start
+                text: ""
+                halign: "left"
+                valign: "middle"
+                text_size: self.size
+                texture_size: self.size
+                font_size: root.width / 24
+                color: (0, 0, 0, 1)
+
+            Label:
+                id: time_end
+                text: ""
+                halign: "left"
+                valign: "middle"
+                text_size: self.size
+                texture_size: self.size
+                font_size: root.width / 24
+                color: (0, 0, 0, 1)
